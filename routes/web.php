@@ -30,3 +30,9 @@ Route::group([
     Route::post('/remove/{id}', 'UserController@destroy')
         ->where('id', '[0-9]+');
 });
+
+Route::group([
+    'prefix' => 'statistics'
+], function () {
+    Route::get('/users','StatisticController@usersStore');
+});

@@ -13,6 +13,12 @@
                                 Users
                             </router-link>
                         </li>
+                        <li :class="{ 'active': menu.isActive.statistics, 'has-sub': menu.isActive.statistics}" @click="active('statistics', 'menu')" v-if="accessAdmin">
+                            <router-link :to="'/statistics/users'">
+                                <i class="fas fa-chart-bar"></i>
+                                Statistics
+                            </router-link>
+                        </li>
                     </ul>
                 </nav>
             </div>
