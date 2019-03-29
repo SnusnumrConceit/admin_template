@@ -36,3 +36,13 @@ Route::group([
 ], function () {
     Route::get('/users','StatisticController@usersStore');
 });
+Auth::routes();
+
+Route::group([
+    'namespace' => 'Auth',
+    'prefix' => 'login'
+], function () {
+    Route::post('/login', 'LoginController@authorization');
+});
+
+Route::get('/home', 'HomeController@index')->name('home');

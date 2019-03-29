@@ -3,7 +3,10 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
+use Illuminate\Support\Facades\Auth;
+use Namshi\JOSE\JWT;
 
 class LoginController extends Controller
 {
@@ -35,5 +38,28 @@ class LoginController extends Controller
     public function __construct()
     {
         $this->middleware('guest')->except('logout');
+    }
+
+    public function authorization(Request $request)
+    {
+        $credentials = $request->only('email', 'password');
+
+        try {
+            if (! $token = JWT::attempt($credentials)) {
+                throw new \Exception('Неверные данные');
+            }
+            Auth::attempt($credentials, true);
+            $user = Auth::user();
+            return response()->json([
+                'user' => $user,
+                'token' => $token,
+                'csrf' => csrf_token()
+            ], 200);
+        } catch (\Exception $error) {
+            return response()->json([
+                'status' => 'error',
+                'msg' => $error->getMessage()
+            ]);
+        }
     }
 }
