@@ -50,10 +50,16 @@ class LoginController extends Controller
             }
             Auth::attempt($credentials, true);
             $user = Auth::user();
+            if ($user->hasRole('admin')) {
+                return response()->json([
+                    'user' => $user,
+                    'token' => $token,
+                    'csrf' => csrf_token()
+                ], 200);
+            }
             return response()->json([
                 'user' => $user,
-                'token' => $token,
-                'csrf' => csrf_token()
+                'token' => $token
             ], 200);
         } catch (\Exception $error) {
             return response()->json([
