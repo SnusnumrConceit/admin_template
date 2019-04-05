@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\User\UserFormRequest;
 use App\Http\Resources\Admin\User\UserCollection;
 use App\User;
 use Carbon\Carbon;
@@ -17,9 +18,10 @@ class UserController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create(Request $request)
+    public function create(UserFormRequest $request)
     {
         try {
+            $request->validated();
             $user = User::where('email', $request->email)->first();
             if ($user) {
                 throw new \Exception('Dublicate user');
@@ -146,9 +148,10 @@ class UserController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(UserFormRequest $request, $id)
     {
         try {
+            $request->validated();
             $user = User::findOrFail($id);
             $user->fill([
                 'name' => $request->name,

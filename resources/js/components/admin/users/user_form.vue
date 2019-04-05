@@ -59,7 +59,12 @@
         },
 
         ru: ru,
-        en: en
+        en: en,
+
+        swal: {
+          errors: [],
+          message: ``
+        }
       }
     },
     methods: {
@@ -67,7 +72,13 @@
         if (this.$route.params.id) {
           const response = await axios.post('/users/update/' + this.$route.params.id, this.user);
           if (response.status !== 200 || response.data.status === 'error') {
-            this.$swal('Error!', response.data.msg, 'error');
+            this.swal.errors = (response.data.errors) ? response.data.errors : {};
+            this.swal.message = this.getSwalMessage();
+            this.$swal({
+              title: 'Error!',
+              html: response.data.msg + this.swal.message,
+              type: 'error'
+            });
             return false;
           }
           this.$swal('Success!', response.data.msg, 'success');
@@ -76,7 +87,13 @@
         } else {
           const response = await axios.post('/users/create', this.user);
           if (response.status !== 200 || response.data.status === 'error') {
-            this.$swal('Error!', response.data.msg, 'error');
+            this.swal.errors = (response.data.errors) ? response.data.errors : {};
+            this.swal.message = this.getSwalMessage();
+            this.$swal({
+              title: 'Error!',
+              html: response.data.msg + this.swal.message,
+              type: 'error'
+            });
             return false;
           }
           this.$swal('Success!', response.data.msg, 'success');
@@ -93,6 +110,16 @@
         }
         this.user = response.data.user;
         return true;
+      },
+
+      getSwalMessage() {
+        return (Object.keys(this.swal.errors).length)
+            ? `<div class="alert alert-danger m-t-20">
+                        <ul class="p-l-20 p-r-20">
+                            ${Object.values(this.swal.errors).map(err => `<li class="text-danger">${err[0]}</li>`)}
+                        </ul>
+                </div>`
+            : '';
       }
     },
     created() {
